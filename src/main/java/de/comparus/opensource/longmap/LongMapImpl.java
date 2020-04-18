@@ -1,5 +1,7 @@
 package de.comparus.opensource.longmap;
 
+import de.comparus.opensource.longmap.avl.Node;
+
 public class LongMapImpl<V> implements LongMap<V> {
     public V put(long key, V value) {
         return null;
