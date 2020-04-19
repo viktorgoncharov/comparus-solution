@@ -2,7 +2,7 @@ package de.comparus.opensource.longmap.avl;
 
 import java.util.Optional;
 
-public class Node <V> {
+public class Node<V> {
     private Node<V> left;
     private Node<V> right;
     private Long key;
@@ -25,16 +25,24 @@ public class Node <V> {
     }
 
     public Node<V> insert(Long key, V value) throws Exception {
-        // Assumption: the key is not null
+        // Assumption: the key is not null for LongMap
         if (key == null) {
             throw new Exception("Key can't be null");
         }
         if (key < getKey()) {
-            this.left = this.left.insert(key, value);
+            if (this.left != null) {
+                this.left = this.left.insert(key, value);
+            } else {
+                this.left = new Node<>(key, value);
+            }
         } else {
-            this.right = this.right.insert(key, value);
+            if (this.right != null) {
+                this.right = this.right.insert(key, value);
+            } else {
+                this.right = new Node<>(key, value);
+            }
         }
-        return this.balancing();
+        return this.balance();
     }
 
     /**
@@ -55,7 +63,7 @@ public class Node <V> {
             return this.right;
         }
         this.left = this.left.removeMin();
-        return this.balancing();
+        return this.balance();
     }
 
     public Node<V> remove(Long key) {
@@ -72,9 +80,9 @@ public class Node <V> {
             Node<V> min = r.findMinKey();
             min.right = r.removeMin();
             min.left = l;
-            return min.balancing();
+            return min.balance();
         }
-        return balancing();
+        return balance();
     }
 
     public Node<V> rotateRight() {
@@ -100,19 +108,20 @@ public class Node <V> {
      *
      * @return                              balanced node
      */
-    public Node<V> balancing() {
+    public Node<V> balance() {
         refreshHeight();
-        if (calcBalanceFactor() == 2) {
+        final int balanceFactor = calcBalanceFactor();
+        if ( balanceFactor == 2) {
             if (this.right.calcBalanceFactor() < 0) {
                 this.right = this.right.rotateRight();
-                return rotateLeft();
             }
+            return rotateLeft();
         }
-        if (calcBalanceFactor() == -2) {
+        if (balanceFactor == -2) {
             if (this.left.calcBalanceFactor() > 0) {
                 this.left = this.left.rotateLeft();
-                return rotateRight();
             }
+            return rotateRight();
         }
         return this;
     }
@@ -121,14 +130,36 @@ public class Node <V> {
         return this.height;
     }
 
+    private int getLeftHeight() {
+        if (this.left!=null) {
+            return this.left.getHeight() + 1;
+        } else {
+            return 0;
+        }
+    }
+
+    private int getRightHeight() {
+        if (this.right!=null) {
+            return this.right.getHeight() + 1;
+        } else {
+            return 0;
+        }
+    }
+
     public int calcBalanceFactor() {
-        return this.right.getHeight() - this.left.getHeight();
+        int leftH = getLeftHeight();
+        int rightH = getRightHeight();
+        return rightH - leftH;
     }
 
     public Node<V> refreshHeight() {
-        final byte hLeft = this.left.getHeight();
-        final byte hRight = this.right.getHeight();
-        this.height = (byte)(((hLeft > hRight)?hLeft:hRight)+1);
+        final int hLeft = getLeftHeight();
+        final int hRight = getRightHeight();
+        if (hLeft > hRight) {
+            this.height = (byte) (hLeft);
+        } else {
+            this.height = (byte) (hRight);
+        }
         return this;
     }
 
