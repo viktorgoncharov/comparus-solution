@@ -5,22 +5,27 @@ import de.comparus.opensource.longmap.avl.Node;
 import java.util.Optional;
 
 public class LongMapImpl<V> implements LongMap<V> {
-    public static final int VALUES_INCREMENT = 1000;
+    public static final int INCREMENT = 1000;
     Node<Integer> node;
-    private Object[] values = new Object[VALUES_INCREMENT];
+    private long[] keys = new long[INCREMENT];
+    private Object[] values = new Object[INCREMENT];
     private int currentValue = 0;
 
     private void extendValues() {
+        long[] oldKeys = this.keys;
+        this.keys = new long[oldKeys.length + INCREMENT];
         Object[] oldValues = this.values;
-        this.values = new Object[oldValues.length + VALUES_INCREMENT];
+        this.values = new Object[oldValues.length + INCREMENT];
         for (int i=0;i<oldValues.length;i++) {
+            this.keys[i] = oldKeys[i];
             this.values[i] = oldValues[i];
         }
     }
 
     private void removeFromValues(int index) {
-        for (int i=index;i<values.length;i++) {
-            values[i] = values[i+1];
+        for (int i=index;i<this.values.length;i++) {
+            this.keys[i] = this.keys[i+1];
+            this.values[i] = this.values[i+1];
         }
         this.currentValue--;
     }
@@ -29,17 +34,18 @@ public class LongMapImpl<V> implements LongMap<V> {
         return this.currentValue == this.values.length;
     }
 
-    private int addValue(V value) {
+    private int addValue(long key, V value) {
         if (valuesIsEmpty()) {
             extendValues();
         }
         this.values[this.currentValue] = value;
+        this.keys[this.currentValue] = key;
         this.currentValue++;
         return this.currentValue-1;
     }
 
     public V put(long key, V value) throws Exception {
-        final int index = addValue(value);
+        final int index = addValue(key, value);
         if (this.node == null) {
             this.node = new Node<>(key, index);
         } else {
@@ -90,8 +96,7 @@ public class LongMapImpl<V> implements LongMap<V> {
     }
 
     public long[] keys() {
-        // TODO: 20.04.20
-        return null;
+        return this.keys;
     }
 
     public V[] values() {
@@ -103,7 +108,7 @@ public class LongMapImpl<V> implements LongMap<V> {
     }
 
     public void clear() {
-        this.values = new Object[VALUES_INCREMENT];
+        this.values = new Object[INCREMENT];
         this.node = null;
     }
 }

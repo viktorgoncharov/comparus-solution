@@ -8,7 +8,7 @@ import java.util.List;
 
 public class LongMapImplTest {
 
-    private LongMap<String> create10() {
+    private LongMap<String> create10() throws Exception {
         final LongMap<String> map = new LongMapImpl<>();
         // creating cycle
         for (Integer i = 0; i< 10; i++) {
@@ -20,7 +20,7 @@ public class LongMapImplTest {
     }
 
     @Test
-    void putGetTest() {
+    void putGetTest() throws Exception {
         final LongMap<String> map = new LongMapImpl<>();
         final String value1 = "value1";
         final String value2 = "value2";
@@ -38,7 +38,7 @@ public class LongMapImplTest {
     }
 
     @Test
-    void removeTest() {
+    void removeTest() throws Exception {
         final LongMap<String> map = create10();
         final List<Integer> toBeRemoved = Arrays.asList(2,5,7);
         // removing cycle
@@ -58,7 +58,7 @@ public class LongMapImplTest {
     }
 
     @Test
-    void containsTest() {
+    void containsTest() throws Exception {
         final LongMap<String> map = create10();
         Assert.assertTrue(map.containsKey(2000L));
         Assert.assertTrue(map.containsValue("value5"));
@@ -71,7 +71,7 @@ public class LongMapImplTest {
     }
 
     @Test
-    void keysValuesTest() {
+    void keysValuesTest() throws Exception {
         final LongMap<String> map = new LongMapImpl<>();
         final long [] keys = new long[10];
         final String[] values = new String[10];
