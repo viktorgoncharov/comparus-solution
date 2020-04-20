@@ -1,5 +1,8 @@
 package de.comparus.opensource.longmap.avl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class Node<V> {
@@ -14,9 +17,9 @@ public class Node<V> {
         this.value = value;
     }
 
-    public Optional<V> get(Long key) {
+    public Optional<Node<V>> get(Long key) {
         if (this.key.equals(key)) {
-            return Optional.of(this.getValue());
+            return Optional.of(this);
         } else if (this.key < key) {
             return this.right.get(key);
         } else {
@@ -169,5 +172,21 @@ public class Node<V> {
 
     public V getValue() {
         return this.value;
+    }
+
+    /**
+     * Root -> left -> right
+     *
+     * @return
+     */
+    public List<V> getAllValues() {
+        List<V> result = new ArrayList<V>(Arrays.asList(this.value));
+        if (this.left != null) {
+            result.addAll(this.left.getAllValues());
+        }
+        if (this.right != null) {
+            result.addAll(this.right.getAllValues());
+        }
+        return result;
     }
 }

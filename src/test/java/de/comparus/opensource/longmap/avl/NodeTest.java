@@ -4,19 +4,28 @@ import com.beust.jcommander.internal.Lists;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.IntStream;
 
 public class NodeTest {
-    public static final int MAX_ITEMS = 10000;
     private Random random = new Random();
 
     private Node<String> produce10K() throws Exception {
+        return produce(10000);
+    }
+
+    private Node<String> produce100K() throws Exception {
+        return produce(100000);
+    }
+
+    private Node<String> produce(int size) throws Exception {
         Node<String> node = new Node<>(0L,"Root");
 
         final List<Integer> keys = new ArrayList<>();
-        IntStream.range(1, MAX_ITEMS).forEach(item -> keys.add(item));
-        for (int i=1;i<MAX_ITEMS;i++) {
+        IntStream.range(1, size).forEach(item -> keys.add(item));
+        for (int i=1;i<size;i++) {
             int keyIndex = random.nextInt(keys.size());
             Long key = Long.valueOf(keys.get(keyIndex));
             keys.remove(keyIndex);
@@ -30,7 +39,8 @@ public class NodeTest {
     void testBalanced() throws Exception {
         Node<String> node = new Node<>(0L,"Root");
         final List<Integer> keys = Lists.newArrayList(0,7,2,1,4,6,3,8,5,9);
-        for (int i=1;i<MAX_ITEMS;i++) {
+        final Integer size = keys.size();
+        for (int i=1;i<size;i++) {
             int keyIndex = i;
             Long key = Long.valueOf(keys.get(keyIndex));
             System.out.println(key);
@@ -41,8 +51,10 @@ public class NodeTest {
     }
 
     /**
-     *  The tree's height can't be higher than 19 according to theoretical limit is computed by the formula:
-     *  1.45 * Log2(n+2), that equals 19 for a tree with 10K nodes
+     *  The tree's height can't be higher than 19 for 10K nodes according
+     *  to theoretical limit is computed by the formula:
+     *
+     *                       1.45 * Log2(n+2)
      *
      *  @throws Exception
      */
@@ -59,5 +71,26 @@ public class NodeTest {
         System.out.println("Min = ".concat(String.valueOf(stats.getMin())));
         System.out.println("Avg = ".concat(String.valueOf(stats.getAverage())));
         Assert.assertTrue(stats.getMax() < 19);
+    }
+
+    @Test
+    void testGetAllValues() throws Exception {
+        final Node<String> node = produce100K();
+        final LocalDateTime started1 = LocalDateTime.now();
+        final List<String> values = node.getAllValues();
+        final LocalDateTime finished1 = LocalDateTime.now();
+
+        final Map<Long, String> hMap = new HashMap<>();
+        for (int i=0;i<100000;i++) {
+            final Long key = random.nextLong();
+            hMap.put(key, String.valueOf(i));
+        }
+        LocalDateTime started2 = LocalDateTime.now();
+        final Collection values2 = hMap.values();
+        LocalDateTime finished2 = LocalDateTime.now();
+
+        final Long seconds1 = ChronoUnit.MILLIS.between(started1, finished1);
+        final Long seconds2 = ChronoUnit.MILLIS.between(started2, finished2);
+        Assert.assertTrue(true);
     }
 }
