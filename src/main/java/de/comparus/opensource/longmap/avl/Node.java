@@ -89,8 +89,8 @@ public class Node<V> {
         final Node<V> q = this.left;
         this.left = q.right;
         q.right = this;
-        q.refreshHeight();
         this.refreshHeight();
+        q.refreshHeight();
         return q;
     }
 
@@ -98,8 +98,8 @@ public class Node<V> {
         final Node<V> p = this.right;
         this.right = p.left;
         p.left = this;
-        p.refreshHeight();
         this.refreshHeight();
+        p.refreshHeight();
         return p;
     }
 
