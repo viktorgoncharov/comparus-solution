@@ -1,6 +1,7 @@
-package de.comparus.opensource.longmap.avl;
+package de.comparus.opensource.longmap;
 
 import com.beust.jcommander.internal.Lists;
+import de.comparus.opensource.longmap.Node;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

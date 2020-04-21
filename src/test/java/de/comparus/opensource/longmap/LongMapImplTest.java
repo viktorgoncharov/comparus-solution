@@ -6,8 +6,10 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.List;
 
-public class LongMapImplTest {
+class LongMapImpl<V> extends LongMapImplVersion2<V> {}
 
+public class LongMapImplTest {
+    
     private LongMap<String> create10() throws Exception {
         final LongMap<String> map = new LongMapImpl<>();
         // creating cycle
@@ -40,7 +42,8 @@ public class LongMapImplTest {
     @Test
     void removeTest() throws Exception {
         final LongMap<String> map = create10();
-        final List<Integer> toBeRemoved = Arrays.asList(2,5,7);
+        final long originalSize = map.size();
+        final List<Integer> toBeRemoved = Arrays.asList(2000,5000,7000);
         // removing cycle
         for (int i=0; i<toBeRemoved.size(); i++) {
             final Integer index = toBeRemoved.get(i);
@@ -53,7 +56,7 @@ public class LongMapImplTest {
             Assert.assertNull(res);
         }
         // size checking
-        final Long sizeAfterRemoved = map.size() - toBeRemoved.size();
+        final Long sizeAfterRemoved = originalSize - toBeRemoved.size();
         Assert.assertEquals(Long.valueOf(map.size()), sizeAfterRemoved);
     }
 
@@ -62,8 +65,8 @@ public class LongMapImplTest {
         final LongMap<String> map = create10();
         Assert.assertTrue(map.containsKey(2000L));
         Assert.assertTrue(map.containsValue("value5"));
-        Assert.assertFalse(map.containsKey(9000L));
-        Assert.assertFalse(map.containsValue("value9"));
+        Assert.assertFalse(map.containsKey(19000L));
+        Assert.assertFalse(map.containsValue("value19"));
         Assert.assertFalse(map.isEmpty());
         map.clear();
         Assert.assertTrue(map.isEmpty());
@@ -84,7 +87,7 @@ public class LongMapImplTest {
             map.put(key, val);
         }
         final long[] keysRes = map.keys();
-        final String[] valsRes = map.values();
+        final Object[] valsRes = map.values();
         Assert.assertTrue(Arrays.equals(keys, keysRes));
         Assert.assertTrue(Arrays.equals(values, valsRes));
     }

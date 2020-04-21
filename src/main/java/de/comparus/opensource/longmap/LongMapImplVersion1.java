@@ -1,10 +1,8 @@
 package de.comparus.opensource.longmap;
 
-import de.comparus.opensource.longmap.avl.Node;
-
 import java.util.Optional;
 
-public class LongMapImpl<V> implements LongMap<V> {
+public class LongMapImplVersion1<V> implements LongMap<V> {
     public static final int INCREMENT = 1000;
     Node<Integer> node;
     private long[] keys = new long[INCREMENT];
@@ -34,7 +32,7 @@ public class LongMapImpl<V> implements LongMap<V> {
         return this.currentValue == this.values.length;
     }
 
-    private int addValue(long key, V value) {
+    private int addValue(long key,V value) {
         if (valuesIsEmpty()) {
             extendValues();
         }
@@ -91,7 +89,11 @@ public class LongMapImpl<V> implements LongMap<V> {
     }
 
     public boolean containsValue(V value) {
-        // TODO: 20.04.20
+        for (int i=0;i<this.values.length;i++) {
+            if (values[i].equals(value)) {
+                return true;
+            }
+        }
         return false;
     }
 

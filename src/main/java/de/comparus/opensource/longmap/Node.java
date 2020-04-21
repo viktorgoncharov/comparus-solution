@@ -1,4 +1,4 @@
-package de.comparus.opensource.longmap.avl;
+package de.comparus.opensource.longmap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -172,6 +172,35 @@ public class Node<V> {
 
     public V getValue() {
         return this.value;
+    }
+
+    public boolean containsValue(V value) {
+        if (this.value.equals(value)) {
+            return true;
+        }
+        if (this.left != null) {
+            return this.left.containsValue(value);
+        }
+        if (this.right != null) {
+            return this.right.containsValue(value);
+        }
+        return false;
+    }
+
+    /**
+     * Root -> left -> right
+     *
+     * @return
+     */
+    public List<Long> getAllKeys() {
+        List<Long> result = new ArrayList<Long>(Arrays.asList(this.key));
+        if (this.left != null) {
+            result.addAll(this.left.getAllKeys());
+        }
+        if (this.right != null) {
+            result.addAll(this.right.getAllKeys());
+        }
+        return result;
     }
 
     /**
