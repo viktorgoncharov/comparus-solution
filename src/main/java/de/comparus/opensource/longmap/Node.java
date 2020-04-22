@@ -11,6 +11,7 @@ public class Node<V> {
     private Long key;
     private V value;
     private byte height;
+    private int size = 1;
 
     public Node(Long key, V value) {
         this.key = key;
@@ -21,9 +22,17 @@ public class Node<V> {
         if (this.key.equals(key)) {
             return Optional.of(this);
         } else if (this.key < key) {
-            return this.right.get(key);
+            if (this.right != null) {
+                return this.right.get(key);
+            } else {
+                return Optional.empty();
+            }
         } else {
-            return this.left.get(key);
+            if (this.left != null) {
+                return this.left.get(key);
+            } else {
+                return Optional.empty();
+            }
         }
     }
 
@@ -45,6 +54,7 @@ public class Node<V> {
                 this.right = new Node<>(key, value);
             }
         }
+        this.size++;
         return this.balance();
     }
 
@@ -85,6 +95,7 @@ public class Node<V> {
             min.left = l;
             return min.balance();
         }
+        this.size--;
         return balance();
     }
 
@@ -175,14 +186,21 @@ public class Node<V> {
     }
 
     public boolean containsValue(V value) {
+        boolean result = false;
         if (this.value.equals(value)) {
             return true;
         }
         if (this.left != null) {
-            return this.left.containsValue(value);
+            result = this.left.containsValue(value);
+            if (result) {
+                return true;
+            }
         }
         if (this.right != null) {
-            return this.right.containsValue(value);
+            result = this.right.containsValue(value);
+            if (result) {
+                return true;
+            }
         }
         return false;
     }
@@ -217,5 +235,9 @@ public class Node<V> {
             result.addAll(this.right.getAllValues());
         }
         return result;
+    }
+
+    public int size() {
+        return this.size;
     }
 }

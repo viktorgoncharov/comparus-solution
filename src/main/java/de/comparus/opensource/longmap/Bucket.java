@@ -17,25 +17,24 @@ public class Bucket<V> {
     private List<Pair<V>> list;
     private Node<V> node;
 
+    private static int entered = 0;
+
     public void addItem(Pair<V> pair) throws Exception {
         if (this.mode == null) {
             this.single = pair;
             this.mode = BucketMode.SINGLE;
-            return;
         } else if (this.mode == BucketMode.SINGLE) {
             this.list = new ArrayList<>();
             this.list.add(single);
             this.list.add(pair);
             this.single = null;
             this.mode = BucketMode.LIST;
-            return;
         } else if (this.mode == BucketMode.LIST) {
-            if (this.list.size()-1 < LIST_LIMIT) {
+            if (this.list.size() < LIST_LIMIT) {
                 this.list.add(pair);
             } else {
-                final Pair<V> first = this.list.get(0);
-                this.node = new Node<V>(first.getKey(), first.getValue());
-                for (int i=1;i<this.list.size();i++) {
+                this.node = new Node<>(pair.getKey(), pair.getValue());
+                for (int i=0;i<this.list.size();i++) {
                     final Pair<V> cur = this.list.get(i);
                     this.node.insert(cur.getKey(), cur.getValue());
                 }
@@ -146,6 +145,23 @@ public class Bucket<V> {
     }
 
     public boolean isEmpty() {
-        return this.mode == null;
+        return (this.single == null && this.list.isEmpty() && this.node == null);
+    }
+
+    public BucketMode getMode() {
+        return this.mode;
+    }
+
+    public int size() {
+        if (this.mode == BucketMode.SINGLE) {
+            return 1;
+        }
+        if (this.mode == BucketMode.LIST) {
+            return this.list.size();
+        }
+        if (this.mode == BucketMode.NODE) {
+            return this.node.size();
+        }
+        return 0;
     }
 }

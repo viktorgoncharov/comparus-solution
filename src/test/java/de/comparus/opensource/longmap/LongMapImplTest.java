@@ -3,19 +3,41 @@ package de.comparus.opensource.longmap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+
+import static java.lang.Math.abs;
 
 class LongMapImpl<V> extends LongMapImplVersion2<V> {}
 
 public class LongMapImplTest {
+    public static final long FIXED_KEY = 999999L;
+    private Random random = new Random();
+    private Long storedKey;
+    private String storedValue;
     
-    private LongMap<String> create10() throws Exception {
+    private LongMap<String> produce(int limit) throws Exception {
         final LongMap<String> map = new LongMapImpl<>();
         // creating cycle
-        for (Integer i = 0; i< 10; i++) {
+        for (Integer i = 0; i< limit; i++) {
             final Long key = i * 1000L;
-            final String val = "value".concat(i.toString());
+            final String val = "value".concat(key.toString());
+            map.put(key, val);
+        }
+        return map;
+    }
+
+    private LongMap<String> randomize(int limit) throws Exception {
+        final LongMap<String> map = new LongMapImpl<>();
+        // creating cycle
+        for (Integer i = 0; i< limit; i++) {
+            Long key = random.nextLong();
+            final String val = "value #".concat(key.toString());
+            if (i == limit / 2) {
+                this.storedKey = key;
+                this.storedValue = val;
+            }
             map.put(key, val);
         }
         return map;
@@ -41,7 +63,7 @@ public class LongMapImplTest {
 
     @Test
     void removeTest() throws Exception {
-        final LongMap<String> map = create10();
+        final LongMap<String> map = produce(10);
         final long originalSize = map.size();
         final List<Integer> toBeRemoved = Arrays.asList(2000,5000,7000);
         // removing cycle
@@ -62,7 +84,7 @@ public class LongMapImplTest {
 
     @Test
     void containsTest() throws Exception {
-        final LongMap<String> map = create10();
+        final LongMap<String> map = produce(10);
         Assert.assertTrue(map.containsKey(2000L));
         Assert.assertTrue(map.containsValue("value5"));
         Assert.assertFalse(map.containsKey(19000L));
@@ -90,5 +112,73 @@ public class LongMapImplTest {
         final Object[] valsRes = map.values();
         Assert.assertTrue(Arrays.equals(keys, keysRes));
         Assert.assertTrue(Arrays.equals(values, valsRes));
+    }
+
+    @Test
+    void testCount() throws Exception {
+        final LongMap<String> lMap = new LongMapImpl<>();
+        int offset = 1;
+        int cnt;
+        for (int i=0;i<80;i++) {
+            final Long key = random.nextLong();
+            final String value = "Value #".concat(String.valueOf(i));
+            lMap.put(key, value);
+            cnt = ((LongMapImplVersion2)lMap).count();
+            if (i-cnt > offset) {
+                System.out.println("key=".concat(key.toString()).concat(" value=").concat(value));
+                offset++;
+            }
+        }
+//        lMap.put(4472186529015423069L, "Value #74");
+        final int count = ((LongMapImplVersion2)lMap).count();
+        Assert.assertTrue(true);
+    }
+
+    @Test
+    void benchmark() throws Exception {
+        /**
+         * inserting
+         */
+        final int LIMIT = 100000;
+        final LocalDateTime lmGenStartedAt = LocalDateTime.now();
+        final LongMap<String> map = randomize(LIMIT);
+        final LocalDateTime lmGenFinishedAt = LocalDateTime.now();
+
+        final LocalDateTime jmGenStartedAt = LocalDateTime.now();
+        final Map<Long,String> jMap = new HashMap<>();
+        Long jStoredKey = null;
+        String jStoredValue = "";
+        for (int i=0;i<LIMIT;i++) {
+            Long key = random.nextLong();
+            final String value = "Value #".concat(String.valueOf(key));
+            if (i == LIMIT/2) {
+                jStoredKey = key;
+                jStoredValue = value;
+            }
+            jMap.put(key, value);
+        }
+        final LocalDateTime jmGenFinishedAt = LocalDateTime.now();
+
+        final long lmDuration = ChronoUnit.MILLIS.between(lmGenStartedAt, lmGenFinishedAt);
+        final long jmDuration = ChronoUnit.MILLIS.between(jmGenStartedAt, jmGenFinishedAt);
+
+        Assert.assertTrue(true);
+
+        /**
+         * getting
+         */
+        final LocalDateTime lmGettingStartedAt = LocalDateTime.now();
+        String val = map.get(storedKey);
+        boolean lmRes = map.containsValue(storedValue);
+        final LocalDateTime lmGettingFinishedAt = LocalDateTime.now();
+        final Long lmGettingDuration = ChronoUnit.MILLIS.between(lmGettingStartedAt, lmGettingFinishedAt);
+        final int lmTotal = ((LongMapImplVersion2)map).count();
+
+        final LocalDateTime jmGettingStartedAt = LocalDateTime.now();
+        boolean jmRes = jMap.containsValue(jStoredValue);
+        final LocalDateTime jmGettingFinishedAt = LocalDateTime.now();
+        final Long jmGettingDuration = ChronoUnit.MILLIS.between(lmGettingStartedAt, lmGettingFinishedAt);
+
+        Assert.assertTrue(true);
     }
 }

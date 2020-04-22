@@ -1,12 +1,13 @@
 package de.comparus.opensource.longmap;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.Math.abs;
+
 public class LongMapImplVersion2<V> implements LongMap<V> {
-    public static final int TABLE_SIZE = 1000;
+    public static final int TABLE_SIZE = 10;
     private Bucket[] table = new Bucket[TABLE_SIZE];
     private Long size = 0L;
 
@@ -17,7 +18,7 @@ public class LongMapImplVersion2<V> implements LongMap<V> {
      * @return
      */
     private int calcId(long key) {
-        final int id = (int) (key % TABLE_SIZE);
+        final int id = abs((int) (key % TABLE_SIZE));
         return id;
     }
 
@@ -133,5 +134,16 @@ public class LongMapImplVersion2<V> implements LongMap<V> {
     public void clear() {
         this.table = new Bucket[TABLE_SIZE];
         this.size = 0L;
+    }
+
+    public int count() {
+        int total = 0;
+        for (int i=0;i<this.table.length;i++) {
+            Bucket bucket = this.table[i];
+            if (bucket != null) {
+                total+=bucket.size();
+            }
+        }
+        return total;
     }
 }
