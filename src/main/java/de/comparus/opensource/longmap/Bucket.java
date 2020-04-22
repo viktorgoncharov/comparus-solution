@@ -17,8 +17,6 @@ public class Bucket<V> {
     private List<Pair<V>> list;
     private Node<V> node;
 
-    private static int entered = 0;
-
     public void addItem(Pair<V> pair) {
         if (this.mode == null) {
             this.single = pair;
@@ -94,7 +92,7 @@ public class Bucket<V> {
         } else if (this.mode == BucketMode.NODE) {
             final Optional<Node<V>> node = this.node.get(key);
             final Pair<V> pair = new Pair(node.get().getKey(), node.get().getValue());
-            this.node.remove(key);
+            this.node = this.node.remove(key);
             return pair;
         }
         return null;
@@ -145,7 +143,7 @@ public class Bucket<V> {
     }
 
     public boolean isEmpty() {
-        return (this.single == null && this.list.isEmpty() && this.node == null);
+        return (this.single == null && (this.list == null || this.list.isEmpty()) && this.node == null);
     }
 
     public BucketMode getMode() {
@@ -164,4 +162,18 @@ public class Bucket<V> {
         }
         return 0;
     }
+
+    public int countAll() {
+        if (this.mode == BucketMode.SINGLE) {
+            return 1;
+        }
+        if (this.mode == BucketMode.LIST) {
+            return this.list.size();
+        }
+        if (this.mode == BucketMode.NODE) {
+            return this.node.countAllNodes();
+        }
+        return 0;
+    }
+
 }

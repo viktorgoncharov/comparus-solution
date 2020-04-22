@@ -7,7 +7,7 @@ import java.util.Optional;
 import static java.lang.Math.abs;
 
 public class LongMapImpl<V> implements LongMap<V> {
-    public static final int TABLE_SIZE = 10;
+    public static final int TABLE_SIZE = 1000;
     private Bucket[] table = new Bucket[TABLE_SIZE];
     private Long size = 0L;
 
@@ -142,6 +142,17 @@ public class LongMapImpl<V> implements LongMap<V> {
             Bucket bucket = this.table[i];
             if (bucket != null) {
                 total+=bucket.size();
+            }
+        }
+        return total;
+    }
+
+    public int countAll() {
+        int total = 0;
+        for (int i=0;i<this.table.length;i++) {
+            Bucket bucket = this.table[i];
+            if (bucket != null) {
+                total+=bucket.countAll();
             }
         }
         return total;

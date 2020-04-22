@@ -1,13 +1,13 @@
 package de.comparus.opensource.longmap;
 
 import com.beust.jcommander.internal.Lists;
-import de.comparus.opensource.longmap.Node;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.IntSummaryStatistics;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 public class NodeTest {
@@ -74,30 +74,9 @@ public class NodeTest {
     }
 
     @Test
-    void testGetAllValues() {
-        final Node<String> node = produce100K();
-        final LocalDateTime started1 = LocalDateTime.now();
-        final List<String> values = node.getAllValues();
-        final LocalDateTime finished1 = LocalDateTime.now();
-
-        final Map<Long, String> hMap = new HashMap<>();
-        for (int i=0;i<100000;i++) {
-            final Long key = random.nextLong();
-            hMap.put(key, String.valueOf(i));
-        }
-        LocalDateTime started2 = LocalDateTime.now();
-        final Collection values2 = hMap.values();
-        LocalDateTime finished2 = LocalDateTime.now();
-
-        final Long seconds1 = ChronoUnit.MILLIS.between(started1, finished1);
-        final Long seconds2 = ChronoUnit.MILLIS.between(started2, finished2);
-        Assert.assertTrue((seconds1/seconds2*1.0)<5);
-    }
-
-    @Test
     void testInserting() {
         Node<String> node = new Node<>(0L, "Root");
-        for (int i=0;i<100;i++) {
+        for (int i=0;i<10;i++) {
             final Long key = (long)(i+1) * 10;
             final String value = "Value #".concat(String.valueOf(key));
             node = node.insert(key, value);
@@ -106,5 +85,6 @@ public class NodeTest {
                 System.out.println("Key = ".concat(key.toString()).concat(" Value = ").concat(value));
             }
         }
+        Assert.assertEquals(node.size(), 11);
     }
 }

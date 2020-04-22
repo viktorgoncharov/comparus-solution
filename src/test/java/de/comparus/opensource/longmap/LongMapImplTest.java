@@ -102,10 +102,10 @@ public class LongMapImplTest {
     @Test
     void containsTest() throws Exception {
         final LongMap<String> map = produce(10);
-        Assert.assertTrue(map.containsKey(2000L));
-        Assert.assertTrue(map.containsValue("value2000"));
-        Assert.assertFalse(map.containsKey(19000L));
-        Assert.assertFalse(map.containsValue("value19000"));
+        Assert.assertTrue(map.containsKey(20L));
+        Assert.assertTrue(map.containsValue("value20"));
+        Assert.assertFalse(map.containsKey(190L));
+        Assert.assertFalse(map.containsValue("value190"));
         Assert.assertFalse(map.isEmpty());
         map.clear();
         Assert.assertTrue(map.isEmpty());
@@ -188,7 +188,7 @@ public class LongMapImplTest {
         boolean lmRes = map.containsValue(storedValue);
         final LocalDateTime lmGettingFinishedAt = LocalDateTime.now();
         final Long lmGettingDuration = ChronoUnit.MILLIS.between(lmGettingStartedAt, lmGettingFinishedAt);
-        final int lmTotal = ((LongMapImpl)map).count();
+        final int lmTotal = ((LongMapImpl)map).countAll();
 
         final LocalDateTime jmGettingStartedAt = LocalDateTime.now();
         boolean jmRes = jMap.containsValue(jStoredValue);

@@ -16,7 +16,6 @@ public class Node<V> {
     private Long key;
     private V value;
     private byte height;
-    private int size = 1;
 
     public Node(Long key, V value) {
         this.key = key;
@@ -59,7 +58,6 @@ public class Node<V> {
                 this.right = new Node<>(key, value);
             }
         }
-        this.size++;
         return this.balance();
     }
 
@@ -92,7 +90,7 @@ public class Node<V> {
         } else {
             Node<V> l = this.left;
             Node<V> r = this.right;
-            if (r != null) {
+            if (r == null) {
                 return l;
             }
             Node<V> min = r.findMinKey();
@@ -100,7 +98,6 @@ public class Node<V> {
             min.left = l;
             return min.balance();
         }
-        this.size--;
         return balance();
     }
 
@@ -254,6 +251,6 @@ public class Node<V> {
     }
 
     public int size() {
-        return this.size;
+        return countAllNodes();
     }
 }
