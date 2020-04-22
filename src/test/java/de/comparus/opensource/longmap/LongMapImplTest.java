@@ -9,19 +9,17 @@ import java.util.*;
 
 import static java.lang.Math.abs;
 
-class LongMapImpl<V> extends LongMapImplVersion2<V> {}
-
 public class LongMapImplTest {
     public static final long FIXED_KEY = 999999L;
     private Random random = new Random();
     private Long storedKey;
     private String storedValue;
-    
+
     private LongMap<String> produce(int limit) throws Exception {
         final LongMap<String> map = new LongMapImpl<>();
         // creating cycle
         for (Integer i = 0; i< limit; i++) {
-            final Long key = i * 1000L;
+            final Long key = i * 10L;
             final String val = "value".concat(key.toString());
             map.put(key, val);
         }
@@ -62,14 +60,33 @@ public class LongMapImplTest {
     }
 
     @Test
+    public void producingTest() {
+        final LongMap<String> map = new LongMapImpl<>();
+        for (int i=0;i<100;i++) {
+            final Long key = (long)i*10;
+            final String value = "Value #".concat(key.toString());
+            map.put(key, value);
+            final int cnt = ((LongMapImpl)map).count();
+            if (cnt != i+1) {
+                System.out.println("Key = ".concat(key.toString()).concat(" value = ").concat(value));
+            }
+        }
+        Assert.assertTrue(true);
+    }
+
+    @Test
     void removeTest() throws Exception {
-        final LongMap<String> map = produce(10);
+        final LongMap<String> map = produce(10000);
         final long originalSize = map.size();
-        final List<Integer> toBeRemoved = Arrays.asList(2000,5000,7000);
+        final List<Integer> toBeRemoved = Arrays.asList(20,50,70);
         // removing cycle
         for (int i=0; i<toBeRemoved.size(); i++) {
             final Integer index = toBeRemoved.get(i);
-            map.remove(index);
+            String removedValue = map.remove(index);
+            if (removedValue == null) {
+                removedValue = "NULL";
+            }
+            System.out.println("Removed value = ".concat(removedValue));
         }
         // checking cycle
         for (int i=0;i<toBeRemoved.size();i++) {
@@ -86,9 +103,9 @@ public class LongMapImplTest {
     void containsTest() throws Exception {
         final LongMap<String> map = produce(10);
         Assert.assertTrue(map.containsKey(2000L));
-        Assert.assertTrue(map.containsValue("value5"));
+        Assert.assertTrue(map.containsValue("value2000"));
         Assert.assertFalse(map.containsKey(19000L));
-        Assert.assertFalse(map.containsValue("value19"));
+        Assert.assertFalse(map.containsValue("value19000"));
         Assert.assertFalse(map.isEmpty());
         map.clear();
         Assert.assertTrue(map.isEmpty());
@@ -123,14 +140,13 @@ public class LongMapImplTest {
             final Long key = random.nextLong();
             final String value = "Value #".concat(String.valueOf(i));
             lMap.put(key, value);
-            cnt = ((LongMapImplVersion2)lMap).count();
+            cnt = ((LongMapImpl)lMap).count();
             if (i-cnt > offset) {
                 System.out.println("key=".concat(key.toString()).concat(" value=").concat(value));
                 offset++;
             }
         }
-//        lMap.put(4472186529015423069L, "Value #74");
-        final int count = ((LongMapImplVersion2)lMap).count();
+        final int count = ((LongMapImpl)lMap).count();
         Assert.assertTrue(true);
     }
 
@@ -172,13 +188,13 @@ public class LongMapImplTest {
         boolean lmRes = map.containsValue(storedValue);
         final LocalDateTime lmGettingFinishedAt = LocalDateTime.now();
         final Long lmGettingDuration = ChronoUnit.MILLIS.between(lmGettingStartedAt, lmGettingFinishedAt);
-        final int lmTotal = ((LongMapImplVersion2)map).count();
+        final int lmTotal = ((LongMapImpl)map).count();
 
         final LocalDateTime jmGettingStartedAt = LocalDateTime.now();
         boolean jmRes = jMap.containsValue(jStoredValue);
         final LocalDateTime jmGettingFinishedAt = LocalDateTime.now();
         final Long jmGettingDuration = ChronoUnit.MILLIS.between(lmGettingStartedAt, lmGettingFinishedAt);
 
-        Assert.assertTrue(true);
+        Assert.assertTrue(lmGettingDuration / (jmGettingDuration * 1.0) < 5);
     }
 }

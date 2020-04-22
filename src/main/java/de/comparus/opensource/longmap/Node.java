@@ -5,6 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * AVL tree
+ *
+ * @param <V>
+ */
 public class Node<V> {
     private Node<V> left;
     private Node<V> right;
@@ -36,10 +41,10 @@ public class Node<V> {
         }
     }
 
-    public Node<V> insert(Long key, V value) throws Exception {
+    public Node<V> insert(Long key, V value) {
         // Assumption: the key is not null for LongMap
         if (key == null) {
-            throw new Exception("Key can't be null");
+            return null;
         }
         if (key < getKey()) {
             if (this.left != null) {
@@ -235,6 +240,17 @@ public class Node<V> {
             result.addAll(this.right.getAllValues());
         }
         return result;
+    }
+
+    public int countAllNodes() {
+        int totalCount = 1;
+        if (this.left != null) {
+            totalCount += this.left.countAllNodes();
+        }
+        if (this.right != null) {
+            totalCount += this.right.countAllNodes();
+        }
+        return totalCount;
     }
 
     public int size() {

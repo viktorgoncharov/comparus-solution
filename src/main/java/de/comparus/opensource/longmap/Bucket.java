@@ -19,7 +19,7 @@ public class Bucket<V> {
 
     private static int entered = 0;
 
-    public void addItem(Pair<V> pair) throws Exception {
+    public void addItem(Pair<V> pair) {
         if (this.mode == null) {
             this.single = pair;
             this.mode = BucketMode.SINGLE;
@@ -36,13 +36,13 @@ public class Bucket<V> {
                 this.node = new Node<>(pair.getKey(), pair.getValue());
                 for (int i=0;i<this.list.size();i++) {
                     final Pair<V> cur = this.list.get(i);
-                    this.node.insert(cur.getKey(), cur.getValue());
+                    this.node = this.node.insert(cur.getKey(), cur.getValue());
                 }
                 this.mode = BucketMode.NODE;
                 this.list = null;
             }
         } else {
-            this.node.insert(pair.getKey(), pair.getValue());
+            this.node = this.node.insert(pair.getKey(), pair.getValue());
         }
     }
 

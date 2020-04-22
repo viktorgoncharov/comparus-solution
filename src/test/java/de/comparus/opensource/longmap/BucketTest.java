@@ -19,6 +19,6 @@ public class BucketTest {
             bucket.addItem(pair);
         }
         final int size = bucket.size();
-        Assert.assertTrue(true);
+        Assert.assertEquals(size, 11);
     }
 }

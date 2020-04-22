@@ -13,15 +13,15 @@ import java.util.stream.IntStream;
 public class NodeTest {
     private Random random = new Random();
 
-    private Node<String> produce10K() throws Exception {
+    private Node<String> produce10K() {
         return produce(10000);
     }
 
-    private Node<String> produce100K() throws Exception {
+    private Node<String> produce100K() {
         return produce(100000);
     }
 
-    private Node<String> produce(int size) throws Exception {
+    private Node<String> produce(int size) {
         Node<String> node = new Node<>(0L,"Root");
 
         final List<Integer> keys = new ArrayList<>();
@@ -37,7 +37,7 @@ public class NodeTest {
     }
 
     @Test
-    void testBalanced() throws Exception {
+    void testBalanced() {
         Node<String> node = new Node<>(0L,"Root");
         final List<Integer> keys = Lists.newArrayList(0,7,2,1,4,6,3,8,5,9);
         final Integer size = keys.size();
@@ -57,10 +57,9 @@ public class NodeTest {
      *
      *                       1.45 * Log2(n+2)
      *
-     *  @throws Exception
      */
     @Test
-    void checkTheoreticalLimit() throws Exception {
+    void checkTheoreticalLimit()  {
         final List<Integer> sizes = new ArrayList<>();
         for (int i=0;i<1000;i++) {
             System.out.println("Pass ".concat(String.valueOf(i)));
@@ -75,7 +74,7 @@ public class NodeTest {
     }
 
     @Test
-    void testGetAllValues() throws Exception {
+    void testGetAllValues() {
         final Node<String> node = produce100K();
         final LocalDateTime started1 = LocalDateTime.now();
         final List<String> values = node.getAllValues();
@@ -92,6 +91,20 @@ public class NodeTest {
 
         final Long seconds1 = ChronoUnit.MILLIS.between(started1, finished1);
         final Long seconds2 = ChronoUnit.MILLIS.between(started2, finished2);
-        Assert.assertTrue(true);
+        Assert.assertTrue((seconds1/seconds2*1.0)<5);
+    }
+
+    @Test
+    void testInserting() {
+        Node<String> node = new Node<>(0L, "Root");
+        for (int i=0;i<100;i++) {
+            final Long key = (long)(i+1) * 10;
+            final String value = "Value #".concat(String.valueOf(key));
+            node = node.insert(key, value);
+            final int cnt = node.countAllNodes();
+            if (cnt != i+2) {
+                System.out.println("Key = ".concat(key.toString()).concat(" Value = ").concat(value));
+            }
+        }
     }
 }

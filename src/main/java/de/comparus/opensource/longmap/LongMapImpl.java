@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import static java.lang.Math.abs;
 
-public class LongMapImplVersion2<V> implements LongMap<V> {
+public class LongMapImpl<V> implements LongMap<V> {
     public static final int TABLE_SIZE = 10;
     private Bucket[] table = new Bucket[TABLE_SIZE];
     private Long size = 0L;
@@ -23,7 +23,7 @@ public class LongMapImplVersion2<V> implements LongMap<V> {
     }
 
     @Override
-    public V put(long key, V value) throws Exception {
+    public V put(long key, V value) {
         final Pair pair = new Pair(key, value);
         final int id = calcId(key);
         if (this.table[id] == null) {

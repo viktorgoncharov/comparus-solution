@@ -13,15 +13,7 @@ public class Pair<V> {
         return key;
     }
 
-    public void setKey(Long key) {
-        this.key = key;
-    }
-
     public V getValue() {
         return value;
-    }
-
-    public void setValue(V value) {
-        this.value = value;
     }
 }
