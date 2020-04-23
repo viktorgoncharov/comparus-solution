@@ -20,7 +20,15 @@ key from a range [1..1000] as a remainder of the division to 1000.
 There is a special test which checks the tree doesn't have a height more
 than theoretical limit.
 
-The code covered by unit-tests for more than 80%. 
+The code covered by unit-tests for more than 80%.
+
+The code organized by the following structure:
+* Bucket - source code for a bucket
+* BucketMode - enum for modes of the bucket
+* LongMap - an original interface
+* LongMapImpl - an implementation of the map
+* Node - AVL tree
+* Pair - a container for pairs 
 
 An original task described below:
 
