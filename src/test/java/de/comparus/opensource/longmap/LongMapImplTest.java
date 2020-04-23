@@ -7,10 +7,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import static java.lang.Math.abs;
-
 public class LongMapImplTest {
-    public static final long FIXED_KEY = 999999L;
     private Random random = new Random();
     private Long storedKey;
     private String storedValue;
@@ -196,5 +193,65 @@ public class LongMapImplTest {
         final Long jmGettingDuration = ChronoUnit.MILLIS.between(lmGettingStartedAt, lmGettingFinishedAt);
 
         Assert.assertTrue(lmGettingDuration / (jmGettingDuration * 1.0) < 5);
+
+        final LocalDateTime lmSizeStartedAt = LocalDateTime.now();
+        final long lmSize = map.size();
+        final LocalDateTime lmSizeFinishedAt = LocalDateTime.now();
+        final long lmSizeDuration = ChronoUnit.NANOS.between(lmSizeStartedAt, lmSizeFinishedAt);
+
+        final long[] keys = map.keys();
+        final int length = ((LongMapImpl)map).values().length;
+        final String[] values = new String[length];
+        System.arraycopy(map.values(), 0, values, 0, length);
+
+        Assert.assertEquals(keys.length, values.length);
+    }
+
+    @Test
+    void removalTest() {
+        final LongMap<String> map = new LongMapImpl<>();
+        map.put(1001, "SINGLE");
+        for (int i=0;i<9;i++) {
+            final long key = i * 1000 + 2;
+            map.put(key,"SEVENS#".concat(String.valueOf(i)));
+        }
+        for (int i=0;i<100;i++) {
+            final long key = i * 1000 + 3;
+            map.put(key,"NODE#".concat(String.valueOf(i)));
+        }
+        map.remove(1001);
+        for (int i=0;i<9;i++) {
+            final long key = i * 1000 + 2;
+            map.remove(key);
+        }
+        for (int i=0;i<100;i++) {
+            final long key = i * 1000 + 3;
+            map.remove(key);
+        }
+        Assert.assertEquals(map.size(), 0L);
+    }
+
+    @Test
+    void doubleKeysTest() {
+        final LongMap<String> map = new LongMapImpl<>();
+        map.put(1001, "SINGLE");
+        map.put(1001, "DOUBLE");
+        final String value = map.get(1001);
+        Assert.assertEquals(value, "DOUBLE");
+        for (int i=0;i<9;i++) {
+            final int key = 2000+i;
+            map.put(key, "LIST #".concat(String.valueOf(i)));
+        }
+        map.put(2005, "REPLACED 2005");
+        final String gotten = map.get(2005);
+        Assert.assertEquals(gotten, "REPLACED 2005");
+        for (int i=0;i<100;i++) {
+            final int key = 3000+i;
+            map.put(key, "NODE #".concat(String.valueOf(i)));
+        }
+        map.put(3010, "REPLACED 3010");
+        final String gottenNode = map.get(3010);
+        Assert.assertEquals(gottenNode,"REPLACED 3010");
+        Assert.assertEquals(map.size(), 110);
     }
 }

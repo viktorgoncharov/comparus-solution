@@ -17,30 +17,64 @@ public class Bucket<V> {
     private List<Pair<V>> list;
     private Node<V> node;
 
-    public void addItem(Pair<V> pair) {
+    /**
+     *
+     * @param pair
+     * @return              true means a new item has been added, false - replaced only
+     */
+    public boolean addItem(Pair<V> pair) {
+        boolean found = false;
         if (this.mode == null) {
             this.single = pair;
             this.mode = BucketMode.SINGLE;
+            return true;
         } else if (this.mode == BucketMode.SINGLE) {
-            this.list = new ArrayList<>();
-            this.list.add(single);
-            this.list.add(pair);
-            this.single = null;
-            this.mode = BucketMode.LIST;
+            if (this.single.getKey().equals(pair.getKey())) {
+                this.single = pair;
+                return false;
+            } else {
+                this.list = new ArrayList<>();
+                this.list.add(single);
+                this.list.add(pair);
+                this.single = null;
+                this.mode = BucketMode.LIST;
+                return true;
+            }
         } else if (this.mode == BucketMode.LIST) {
+            for (int i=0;i<this.list.size();i++) {
+                final Pair<V> p = this.list.get(i);
+                if (p.getKey().equals(pair.getKey())) {
+                    this.list.set(i, pair);
+                    found = true;
+                }
+            }
+            if (found) {
+                return true;
+            }
             if (this.list.size() < LIST_LIMIT) {
                 this.list.add(pair);
+                return true;
             } else {
-                this.node = new Node<>(pair.getKey(), pair.getValue());
-                for (int i=0;i<this.list.size();i++) {
+                final Pair<V> first = this.list.get(0);
+                this.node = new Node<>(first.getKey(), first.getValue());
+                for (int i=1;i<this.list.size();i++) {
                     final Pair<V> cur = this.list.get(i);
                     this.node = this.node.insert(cur.getKey(), cur.getValue());
                 }
+                found = false;
+                Optional<Node<V>> exist = this.node.get(pair.getKey());
+                found = exist.isPresent();
+                this.node = this.node.insert(pair.getKey(), pair.getValue());
                 this.mode = BucketMode.NODE;
                 this.list = null;
+                return !found;
             }
         } else {
+            found = false;
+            Optional<Node<V>> exist = this.node.get(pair.getKey());
+            found = exist.isPresent();
             this.node = this.node.insert(pair.getKey(), pair.getValue());
+            return !found;
         }
     }
 

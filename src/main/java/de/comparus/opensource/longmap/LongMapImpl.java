@@ -29,8 +29,9 @@ public class LongMapImpl<V> implements LongMap<V> {
         if (this.table[id] == null) {
             this.table[id] = new Bucket();
         }
-        this.table[id].addItem(pair);
-        this.size++;
+        if (this.table[id].addItem(pair)) {
+            this.size++;
+        }
         return value;
     }
 
@@ -101,7 +102,7 @@ public class LongMapImpl<V> implements LongMap<V> {
     @Override
     public long[] keys() {
         final List<Long> keys = new ArrayList<>();
-        for (int i=0;i<this.size;i++) {
+        for (int i=0;i<this.table.length;i++) {
             if (this.table[i] != null) {
                 keys.addAll(this.table[i].getKeys());
             }
@@ -112,7 +113,7 @@ public class LongMapImpl<V> implements LongMap<V> {
     @Override
     public V[] values() {
         final List<V> values = new ArrayList<>();
-        for (int i=0;i<this.size;i++) {
+        for (int i=0;i<this.table.length;i++) {
             if (this.table[i] != null) {
                 values.addAll(this.table[i].getValues());
             }

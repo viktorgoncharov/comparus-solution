@@ -45,7 +45,9 @@ public class Node<V> {
         if (key == null) {
             return null;
         }
-        if (key < getKey()) {
+        if (key.equals(getKey())) {
+            this.value = value;
+        } else if (key < getKey()) {
             if (this.left != null) {
                 this.left = this.left.insert(key, value);
             } else {
@@ -131,13 +133,15 @@ public class Node<V> {
             if (this.right.calcBalanceFactor() < 0) {
                 this.right = this.right.rotateRight();
             }
-            return rotateLeft();
+            Node<V> result = rotateLeft();
+            return result;
         }
         if (balanceFactor == -2) {
             if (this.left.calcBalanceFactor() > 0) {
                 this.left = this.left.rotateLeft();
             }
-            return rotateRight();
+            Node<V> result = rotateRight();
+            return result;
         }
         return this;
     }
