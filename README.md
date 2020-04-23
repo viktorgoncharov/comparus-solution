@@ -1,13 +1,14 @@
 # LongMap Solution
 
-In result of considering the task, I assumed the following primary requirements:
+Because requirements regarding performance and memory conflicts 
+each other, I identificated the following primary requirements:
 * it should not use any known Map implementations; 
 * it should use as less memory as possible
 
 And secondary:
 * it should have adequate performance;
 
-The solution implements a map which contains number of buckets. 
+The solution implements a map which contains number (1000) of buckets. 
 Every bucket can contain a single value, list up to 10 items or AVL tree
 to keep more than 10 values. The picture below shows the solution in 
 principle.
