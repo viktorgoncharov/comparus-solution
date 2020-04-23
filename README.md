@@ -12,16 +12,15 @@ Every bucket can contain a single value, list up to 10 items or AVL tree
 to keep more than 10 values. The picture below shows the solution in 
 principle.
 
-![map](https://ibb.co/7VkM8yp)
+![map]([URL=http://piccy.info/view3/13770637/5d6cc1a9e76b36b26fba5a0538ab43eb/][IMG]http://i.piccy.info/i9/a80274230a320c5f5aa7179f5dae8ff1/1587668657/6703/1374641/longmap_240.jpg[/IMG][/URL][URL=http://i.piccy.info/a3c/2020-04-23-19-04/i9-13770637/240x154-r][IMG]http://i.piccy.info/a3/2020-04-23-19-04/i9-13770637/240x154-r/i.gif[/IMG][/URL])
 
-To insert a new item, A map contains 1000 buckets, 
-it computes a key from a range [1..1000] as a remainder of the 
-division to 1000.    
+The map contains 1000 buckets, and to insert a new item it computes a 
+key from a range [1..1000] as a remainder of the division to 1000.    
 
 There is a special test which checks the tree doesn't have a height more
 than theoretical limit.
 
-The code covered by unit-tests more than 80%. 
+The code covered by unit-tests for more than 80%. 
 
 An original task described below:
 
