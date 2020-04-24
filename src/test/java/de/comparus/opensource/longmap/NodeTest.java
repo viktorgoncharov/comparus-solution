@@ -48,7 +48,7 @@ public class NodeTest {
             String value = "Node #".concat(String.valueOf(key));
             node = node.insert(key, value);
         }
-        Assert.assertTrue(true);
+        Assert.assertTrue(node.getHeight() <= 5);
     }
 
     /**

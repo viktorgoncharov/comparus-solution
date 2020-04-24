@@ -68,7 +68,7 @@ public class LongMapImplTest {
                 System.out.println("Key = ".concat(key.toString()).concat(" value = ").concat(value));
             }
         }
-        Assert.assertTrue(true);
+        Assert.assertEquals(map.size(), 100);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class LongMapImplTest {
             }
         }
         final int count = ((LongMapImpl)lMap).count();
-        Assert.assertTrue(true);
+        Assert.assertEquals(count, 80);
     }
 
     @Test
